@@ -30,12 +30,12 @@ values
 (100000,50000,1),
 (25000,5000,3);
 
-insert into Accounts(Balance,OwnerId)
+insert into Accounts(Balance,Number,OwnerId)
 values
-(500000,1),
-(100000,2),
-(1234567,3),
-(550,4);
+(500000,'1112223334',1),
+(100000,'1234567890',2),
+(1234567,'9876543210',3),
+(550,'1231231231',4);
 
 insert into PaymentCards(Number,ExpirationDate,SecurityCode,AccountId)
 values

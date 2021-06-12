@@ -29,11 +29,12 @@ as
 go
 
 -- get all loans with their owners
-create view LoansWithOwners
+create view ActiveLoansWithOwners
 as
 	select p.Id, p.Name, p.BirthDate,l.TotalAmount, l.RemainingAmount
 	from Loans l
 	inner join Clients c on c.Id = l.ClientId
 	inner join People p on p.Id = c.PersonId
+	where l.IsCompleted = 0
 
 go

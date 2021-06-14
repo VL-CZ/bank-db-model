@@ -1,8 +1,8 @@
 # Database model of a Bank 
 See the full requirements [here](https://www.ms.mff.cuni.cz/~kopecky/vyuka/dbapl/).
 
-Data model:
-![Data model](./db-model.png)
+## Data model
+![Data model](db-model.PNG)
 
 ## Create schema
 - run [create_tables.sql](create_tables.sql)

@@ -24,6 +24,7 @@ create table [dbo].[Employees](
 
 create table [dbo].[Clients](
 	[Id] [int] not null primary key,
+	[IsActive] [bit] not null default 1,
 	constraint [FK_Client_Person] foreign key([Id])
 		references [dbo].[People] ([Id])
 );
@@ -45,6 +46,7 @@ create table [dbo].[Accounts](
 	[Number] [nvarchar](20) not null unique,
 	[OwnerId] [int] not null,
 	[IsSaving] [bit] not null,
+	[IsActive] [bit] not null default 1,
 	constraint [FK_Accounts_Clients] foreign key([OwnerId])
 		references [dbo].[Clients] ([Id])
 );

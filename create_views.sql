@@ -4,7 +4,8 @@ as
 	select p.Id,p.BirthDate,p.Name 
 	from Clients c
 	inner join People p
-	on p.Id = c.Id;
+	on p.Id = c.Id
+	where c.IsActive=1;
 
 go
 
@@ -15,7 +16,6 @@ as
 	from Employees e
 	inner join People p
 	on p.Id = e.Id;
-
 go
 
 -- get all Accounts including their owners
@@ -25,7 +25,7 @@ as
 	from Accounts a
 	inner join Clients c on c.Id = a.OwnerId
 	inner join People p on p.Id = c.Id
-
+	where a.IsActive = 1;
 go
 
 -- get all loans with their owners
@@ -35,7 +35,7 @@ as
 	from Loans l
 	inner join Clients c on c.Id = l.ClientId
 	inner join People p on p.Id = c.Id
-	where l.IsCompleted = 0
+	where l.IsCompleted = 0;
 
 go
 

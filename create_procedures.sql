@@ -95,18 +95,10 @@ go
 create procedure RemoveClient
 	@idClient int -- id of the client to remove
 as
-	begin try
-		begin transaction;
-			delete from Clients
-			where Id = @idClient
-
-			exec TryRemovePerson @idClient;
-		commit transaction;
-	end try
-	begin catch
-		rollback transaction;
-		throw;
-	end catch
+	update Clients
+	set IsActive=0
+	where Id = @idClient;
+	
 go
 
 -- add new standard account
@@ -133,19 +125,10 @@ go
 create procedure RemoveAccount
 	@idAccount int -- id of the account to remove
 as
-	begin try
-		begin transaction;
-			delete from PaymentCards
-			where AccountId = @idAccount;
+	update Accounts
+	set IsActive=0
+	where Id=@idAccount;
 
-			delete from Accounts
-			where Id = @idAccount;
-		commit transaction;
-	end try
-	begin catch
-		rollback transaction;
-		throw;
-	end catch
 go
 
 -- add new card

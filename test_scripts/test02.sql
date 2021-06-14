@@ -67,5 +67,6 @@ exec TransferMoney 4,2,6666;
 select * from AccountsWithOwners;
 select * from AllTransactions;
 
+-- display all in/out -coming transmissions with respect to the given account
 exec GetAllIncomingTransactions 2;
 exec GetAllOutcomingTransactions 2;

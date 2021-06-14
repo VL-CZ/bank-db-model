@@ -154,9 +154,7 @@ as
 		begin transaction;
 			declare @idClient int;
 
-			update Accounts
-			set Balance = Balance + @amount
-			where Id = @idAccount;
+			exec AddMoneyToAccount @idAccount,@amount;
 
 			select
 				@idClient = a.OwnerId
@@ -213,6 +211,28 @@ as
 
 go
 
+-- add money to the given account
+create procedure AddMoneyToAccount
+	@idAccount int, -- identifier of the account
+	@amountToAdd int -- amount of money to add to the account
+as
+	update Accounts
+	set Balance = Balance + @amountToAdd
+	where Id = @idAccount;
+
+go
+
+-- subtract money from the given account
+create procedure SubtractMoneyFromAccount
+	@idAccount int, -- identifier of the account
+	@amountToAdd int -- amount of money to subtract from the account
+as
+	update Accounts
+	set Balance = Balance - @amountToAdd
+	where Id = @idAccount;
+
+go
+
 -- transfer money from one account to another
 create procedure TransferMoney
 	@senderAccountId int, -- account id of the sender
@@ -221,13 +241,9 @@ create procedure TransferMoney
 as
 	begin try
 		begin transaction;
-			update Accounts
-			set Balance = Balance - @amount
-			where Id = @senderAccountId;
-
-			update Accounts
-			set Balance = Balance + @amount
-			where Id = @recipientAccountId;
+			exec SubtractMoneyFromAccount @senderAccountId,@amount;
+			
+			exec AddMoneyToAccount @recipientAccountId,@amount;
 
 			insert into MoneyTransactions(Amount, DateCreated)
 			values (@amount, GETDATE());
@@ -248,9 +264,7 @@ create procedure WithdrawMoney
 as
 	begin try
 		begin transaction;
-			update Accounts
-			set Balance = Balance - @amount
-			where Id = @idAccount;
+			exec SubtractMoneyFromAccount @idAccount,@amount;
 
 			insert into MoneyTransactions(Amount, DateCreated)
 			values (@amount, GETDATE());
@@ -271,9 +285,7 @@ create procedure DepositMoney
 as
 	begin try
 		begin transaction;
-			update Accounts
-			set Balance = Balance + @amount
-			where Id = @idAccount;
+			exec AddMoneyToAccount @idAccount,@amount;
 
 			insert into MoneyTransactions(Amount, DateCreated)
 			values (@amount, GETDATE());
@@ -297,6 +309,7 @@ as
 go
 
 -- pay monthly loan fee
+-- creates LoanPayment entity and subtracts money from the given account
 create procedure PayMonthlyLoan
 	@idAccount int, -- identifier of the account
 	@idLoan int -- id of the loan to pay
@@ -314,9 +327,7 @@ as
 			from Loans l
 			where l.Id = @idLoan;
 
-			update Accounts
-			set Balance = Balance - @amount
-			where Id = @idAccount;
+			exec SubtractMoneyFromAccount @idAccount,@amount;
 
 			insert into MoneyTransactions(Amount, DateCreated)
 			values (@amount, GETDATE());
@@ -346,9 +357,7 @@ as
 	from Accounts a
 	where a.Id = @idAccount;
 
-	update Accounts
-	set Balance = Balance + @moneyToAdd
-	where Id = @idAccount;
+	exec AddMoneyToAccount @idAccount,@moneyToAdd;
 
 	insert into MoneyTransactions(Amount, DateCreated)
 	values (@moneyToAdd, GETDATE());

@@ -198,6 +198,7 @@ as
 	begin try
 		begin transaction;
 			declare @idClient int;
+			declare @loanInterest int;
 
 			exec AddMoneyToAccount @idAccount,@amount;
 
@@ -206,8 +207,12 @@ as
 			from Accounts a
 			where a.Id = @idAccount;
 
-			insert into Loans(ClientId,TotalAmount,RemainingAmount,MonthlyPayment)
-			values(@idClient,@amount,@amount * 1.2,@monthlyPayment);
+			select
+				@loanInterest = c.LoanInterestRate
+			from CommonData c;
+
+			insert into Loans(ClientId,AmountLoaned,TotalAmountToPay,RemainingAmount,MonthlyPayment)
+			values(@idClient,@amount,@amount * @loanInterest,@amount * @loanInterest,@monthlyPayment);
 		commit transaction;
 	end try
 	begin catch

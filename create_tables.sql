@@ -1,5 +1,6 @@
 create table [dbo].[CommonData](
-	[YearlyInterestRate] [float] not null
+	[YearlyInterestRate] [float] not null,
+	[LoanInterestRate] [float] not null,
 );
 
 create table [dbo].[People](

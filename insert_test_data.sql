@@ -1,5 +1,5 @@
-insert into CommonData(YearlyInterestRate)
-values (0.01);
+insert into CommonData(YearlyInterestRate,LoanInterestRate)
+values (0.01,0.1);
 
 insert into Departments(Address)
 values

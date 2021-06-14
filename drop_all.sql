@@ -1,6 +1,6 @@
 -- drop all procedures
 drop procedure TryRemovePerson;
-drop procedure AddEmployeeToDepartment;
+drop procedure AddEmployee;
 drop procedure RemoveEmployee;
 drop procedure AddClient;
 drop procedure RemoveClient;
@@ -18,7 +18,7 @@ drop procedure DepositMoney;
 drop procedure MarkCompletedLoans;
 drop procedure PayMonthlyLoan;
 drop procedure AddYearlyInterest;
-drop procedure AddInterestsToSavingAccounts;
+drop procedure AddYearlyInterests;
 drop procedure GetAllIncomingTransactions
 drop procedure GetAllOutcomingTransactions;
 

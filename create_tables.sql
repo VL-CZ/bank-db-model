@@ -60,7 +60,7 @@ create table [dbo].[PaymentCards](
 );
 
 create table [dbo].[MoneyTransactions](
-	[Id] [int] not null primary key,
+	[Id] [int] identity(1,1) not null primary key,
 	[DateCreated] [date] not null,
 	[Amount] [int] not null
 );

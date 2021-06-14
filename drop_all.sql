@@ -10,8 +10,6 @@ drop procedure RemoveAccount;
 drop procedure AddLoan;
 drop procedure AddCard;
 drop procedure RemoveCard;
-drop procedure GetActiveLoansOf;
-drop procedure TotalMonthlyPaymentOf;
 drop procedure TransferMoney;
 drop procedure WithdrawMoney;
 drop procedure DepositMoney;

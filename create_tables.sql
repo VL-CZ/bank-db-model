@@ -105,7 +105,7 @@ create table [dbo].[MoneyDeposits](
 );
 
 create table [dbo].[MoneyTransfers](
-	[Id] [int] identity(1,1) not null primary key,
+	[Id] [int] not null primary key,
 	[SenderAccountId] [int] not null,
 	[RecipientAccountId] [int] not null,
 	constraint [FK_MoneyTransfers_MoneyTransactions] foreign key([Id])

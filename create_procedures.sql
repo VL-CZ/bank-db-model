@@ -148,6 +148,49 @@ as
 	end catch
 go
 
+-- add new card
+create procedure AddCard
+	@idAccount int, -- id of the account that this card belongs to
+	@number nchar(10), -- card number
+	@expirationDate date, -- expiration date
+	@securityCode int -- security code
+as
+	insert into PaymentCards(AccountId,ExpirationDate,Number,SecurityCode)
+	values (@idAccount,@expirationDate,@number,@securityCode);
+
+go
+
+-- remove payment card
+create procedure RemoveCard
+	@idCard int -- id of the card to remove
+as
+	delete from PaymentCards
+	where Id = @idCard;
+
+go
+
+-- add money to the given account
+create procedure AddMoneyToAccount
+	@idAccount int, -- identifier of the account
+	@amountToAdd int -- amount of money to add to the account
+as
+	update Accounts
+	set Balance = Balance + @amountToAdd
+	where Id = @idAccount;
+
+go
+
+-- subtract money from the given account
+create procedure SubtractMoneyFromAccount
+	@idAccount int, -- identifier of the account
+	@amountToAdd int -- amount of money to subtract from the account
+as
+	update Accounts
+	set Balance = Balance - @amountToAdd
+	where Id = @idAccount;
+
+go
+
 -- add new loan to client
 -- send money to the given account
 -- and create new loan entity
@@ -175,69 +218,6 @@ as
 		rollback transaction;
 		throw;
 	end catch
-go
-
--- add new card
-create procedure AddCard
-	@idAccount int, -- id of the account that this card belongs to
-	@number nchar(10), -- card number
-	@expirationDate date, -- expiration date
-	@securityCode int -- security code
-as
-	insert into PaymentCards(AccountId,ExpirationDate,Number,SecurityCode)
-	values (@idAccount,@expirationDate,@number,@securityCode);
-
-go
-
--- remove payment card
-create procedure RemoveCard
-	@idCard int -- id of the card to remove
-as
-	delete from PaymentCards
-	where Id = @idCard;
-
-go
-
--- get all active loans of the given client
-create procedure GetActiveLoansOf
-	@idClient int -- identifier of the client
-as
-	select l.TotalAmount, l.RemainingAmount,l.MonthlyPayment
-	from Loans l
-	where l.IsCompleted = 0 and l.ClientId = @idClient;
-
-go
-
--- get total monthly payment for all of the client's loans
-create procedure TotalMonthlyPaymentOf
-	@idClient int -- identifier of the client
-as
-	select sum(l.MonthlyPayment)
-	from Loans l
-	where l.IsCompleted = 0 and l.ClientId = @idClient;
-
-go
-
--- add money to the given account
-create procedure AddMoneyToAccount
-	@idAccount int, -- identifier of the account
-	@amountToAdd int -- amount of money to add to the account
-as
-	update Accounts
-	set Balance = Balance + @amountToAdd
-	where Id = @idAccount;
-
-go
-
--- subtract money from the given account
-create procedure SubtractMoneyFromAccount
-	@idAccount int, -- identifier of the account
-	@amountToAdd int -- amount of money to subtract from the account
-as
-	update Accounts
-	set Balance = Balance - @amountToAdd
-	where Id = @idAccount;
-
 go
 
 -- transfer money from one account to another
@@ -338,6 +318,10 @@ as
 			where l.Id = @idLoan;
 
 			exec SubtractMoneyFromAccount @idAccount,@amount;
+
+			update Loans
+			set RemainingAmount = RemainingAmount - @amount
+			where Id = @idLoan;
 
 			insert into MoneyTransactions(Amount, DateCreated)
 			values (@amount, GETDATE());

@@ -34,7 +34,7 @@ create table [dbo].[Loans](
 	[RemainingAmount] [int] not null,
 	[ClientId] [int] not null,
 	[MonthlyPayment] [int] not null,
-	[IsCompleted] [bit] not null,
+	[IsCompleted] [bit] not null default 0,
 	constraint [FK_Loans_Clients] foreign key([ClientId])
 		references [dbo].[Clients] ([Id])
 );

@@ -49,6 +49,7 @@ as
 	end try
 	begin catch
 		rollback transaction;
+		throw;
 	end catch
 go
 
@@ -66,6 +67,7 @@ as
 	end try
 	begin catch
 		rollback transaction;
+		throw;
 	end catch
 go
 
@@ -85,6 +87,7 @@ as
 	end try
 	begin catch
 		rollback transaction;
+		throw;
 	end catch
 go
 
@@ -102,12 +105,13 @@ as
 	end try
 	begin catch
 		rollback transaction;
+		throw;
 	end catch
 go
 
 -- add new standard account
 create procedure AddStandardAccount
-	@number int, -- account number
+	@number nvarchar(20), -- account number
 	@idClient int -- id of the owner
 as
 	insert into Accounts(Number,Balance,OwnerId,IsSaving)
@@ -117,7 +121,7 @@ go
 
 -- add new saving account
 create procedure AddSavingAccount
-	@number int, -- account number
+	@number nvarchar(20), -- account number
 	@idClient int -- id of the owner
 as
 	insert into Accounts(Number,Balance,OwnerId,IsSaving)
@@ -140,6 +144,7 @@ as
 	end try
 	begin catch
 		rollback transaction;
+		throw;
 	end catch
 go
 
@@ -148,7 +153,8 @@ go
 -- and create new loan entity
 create procedure AddLoan
 	@idAccount int, -- account where to send money
-	@amount int -- amount of money
+	@amount int, -- amount of money
+	@monthlyPayment int -- monthly fee
 as
 	begin try
 		begin transaction;
@@ -161,12 +167,13 @@ as
 			from Accounts a
 			where a.Id = @idAccount;
 
-			insert into Loans(ClientId,TotalAmount,RemainingAmount)
-			values(@idClient,@amount,@amount * 1.2);
+			insert into Loans(ClientId,TotalAmount,RemainingAmount,MonthlyPayment)
+			values(@idClient,@amount,@amount * 1.2,@monthlyPayment);
 		commit transaction;
 	end try
 	begin catch
 		rollback transaction;
+		throw;
 	end catch
 go
 
@@ -254,6 +261,7 @@ as
 	end try
 	begin catch
 		rollback transaction;
+		throw;
 	end catch
 go
 
@@ -275,6 +283,7 @@ as
 	end try
 	begin catch
 		rollback transaction;
+		throw;
 	end catch
 go
 
@@ -296,6 +305,7 @@ as
 	end try
 	begin catch
 		rollback transaction;
+		throw;
 	end catch
 go
 
@@ -338,6 +348,7 @@ as
 	end try
 	begin catch
 		rollback transaction;
+		throw;
 	end catch
 go
 
@@ -395,6 +406,7 @@ as
 	end try
 	begin catch
 		rollback transaction;
+		throw;
 	end catch
 go
 

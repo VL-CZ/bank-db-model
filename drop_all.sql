@@ -21,6 +21,8 @@ drop procedure AddYearlyInterest;
 drop procedure AddYearlyInterests;
 drop procedure GetAllIncomingTransactions
 drop procedure GetAllOutcomingTransactions;
+drop procedure AddMoneyToAccount;
+drop procedure SubtractMoneyFromAccount;
 
 -- drop all views
 drop view ClientsWithPersonData;

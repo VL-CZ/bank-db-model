@@ -21,7 +21,7 @@ go
 -- get all Accounts including their owners
 create view AccountsWithOwners
 as
-	select p.Id, p.Name, p.BirthDate, a.Number, a.Balance, a.IsSaving
+	select p.Id as 'PersonId', p.Name, p.BirthDate, a.Id as 'AccountId', a.Number, a.Balance, a.IsSaving
 	from Accounts a
 	inner join Clients c on c.Id = a.OwnerId
 	inner join People p on p.Id = c.Id
@@ -31,7 +31,7 @@ go
 -- get all loans with their owners
 create view ActiveLoansWithOwners
 as
-	select p.Id, p.Name, p.BirthDate,l.TotalAmount, l.RemainingAmount
+	select p.Id as 'PersonId', p.Name, p.BirthDate,l.Id as 'LoanId', l.TotalAmount, l.RemainingAmount
 	from Loans l
 	inner join Clients c on c.Id = l.ClientId
 	inner join People p on p.Id = c.Id

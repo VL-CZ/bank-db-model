@@ -208,7 +208,7 @@ as
 			where a.Id = @idAccount;
 
 			select
-				@loanInterest = c.LoanInterestRate
+				@loanInterest = c.LoanInterestRate + 1
 			from CommonData c;
 
 			insert into Loans(ClientId,AmountLoaned,TotalAmountToPay,RemainingAmount,MonthlyPayment)

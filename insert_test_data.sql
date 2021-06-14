@@ -28,23 +28,23 @@ values
 (4),
 (6);
 
-insert into Loans(TotalAmount,RemainingAmount,ClientId,MonthlyPayment,IsCompleted)
+insert into Loans(AmountLoaned,TotalAmountToPay,RemainingAmount,ClientId,MonthlyPayment,IsCompleted)
 values
-(100000,120000,2,5000,0),
-(20000,24000,3,1000,0);
+(100000,110000,110000,2,5000,0),
+(20000,22000,22000,3,1000,0);
 
 -- default data (no money)
 insert into Accounts(Balance,Number,OwnerId,IsSaving)
 values
-(0,'1112223334',2,0),
-(0,'1234567890',3,1),
-(0,'9876543210',4,0),
-(0,'9996663330',4,1),
-(0,'1231231231',6,0);
+(0,'001112223334',2,0),
+(0,'001234567890',3,1),
+(0,'009876543210',4,0),
+(0,'009996663330',4,1),
+(0,'001231231231',6,0);
 
 insert into PaymentCards(Number,ExpirationDate,SecurityCode,AccountId)
 values
-('1234567890','2022-08-25',123,1),
-('2225554444','2022-04-30',123,3),
-('1111122222','2022-12-31',123,5);
+('1234567890000000','2022-08-25',123,1),
+('2222555544443333','2022-04-30',123,3),
+('1111222233334444','2022-12-31',123,5);
 

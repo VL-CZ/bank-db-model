@@ -1,117 +1,117 @@
-CREATE TABLE [dbo].[CommonData](
-	[YearlyInterestRate] [float] NOT NULL
+create table [dbo].[CommonData](
+	[YearlyInterestRate] [float] not null
 );
 
-CREATE TABLE [dbo].[People](
-	[Id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
-	[Name] [nvarchar](200) NOT NULL,
-	[BirthDate] [date] NOT NULL,
+create table [dbo].[People](
+	[Id] [int] identity(1,1) not null primary key,
+	[Name] [nvarchar](200) not null,
+	[BirthDate] [date] not null,
 );
 
-CREATE TABLE [dbo].[Departments](
-	[Id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
-	[Address] [nvarchar](max) NOT NULL
+create table [dbo].[Departments](
+	[Id] [int] identity(1,1) not null primary key,
+	[Address] [nvarchar](max) not null
 );
 
-CREATE TABLE [dbo].[Employees](
-	[Id] [int] NOT NULL PRIMARY KEY,
-	[DepartmentId] [int] NOT NULL, 
-	CONSTRAINT [FK_Employee_Department] FOREIGN KEY([DepartmentId])
-		REFERENCES [dbo].[Departments] ([Id]),
-	CONSTRAINT [FK_Employee_Person] FOREIGN KEY([Id])
-		REFERENCES [dbo].[People] ([Id])
+create table [dbo].[Employees](
+	[Id] [int] not null primary key,
+	[DepartmentId] [int] not null, 
+	constraint [FK_Employee_Department] foreign key([DepartmentId])
+		references [dbo].[Departments] ([Id]),
+	constraint [FK_Employee_Person] foreign key([Id])
+		references [dbo].[People] ([Id])
 );
 
-CREATE TABLE [dbo].[Clients](
-	[Id] [int] NOT NULL PRIMARY KEY,
-	CONSTRAINT [FK_Client_Person] FOREIGN KEY([Id])
-		REFERENCES [dbo].[People] ([Id])
+create table [dbo].[Clients](
+	[Id] [int] not null primary key,
+	constraint [FK_Client_Person] foreign key([Id])
+		references [dbo].[People] ([Id])
 );
 
-CREATE TABLE [dbo].[Loans](
-	[Id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
-	[TotalAmount] [int] NOT NULL,
-	[RemainingAmount] [int] NOT NULL,
-	[ClientId] [int] NOT NULL,
-	[MonthlyPayment] [int] NOT NULL,
-	[IsCompleted] [bit] NOT NULL,
-	CONSTRAINT [FK_Loans_Clients] FOREIGN KEY([ClientId])
-		REFERENCES [dbo].[Clients] ([Id])
+create table [dbo].[Loans](
+	[Id] [int] identity(1,1) not null primary key,
+	[TotalAmount] [int] not null,
+	[RemainingAmount] [int] not null,
+	[ClientId] [int] not null,
+	[MonthlyPayment] [int] not null,
+	[IsCompleted] [bit] not null,
+	constraint [FK_Loans_Clients] foreign key([ClientId])
+		references [dbo].[Clients] ([Id])
 );
 
-CREATE TABLE [dbo].[Accounts](
-	[Id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
-	[Balance] [int] NOT NULL,
-	[Number] [nvarchar](20) NOT NULL UNIQUE,
-	[OwnerId] [int] NOT NULL,
-	[IsSaving] [bit] NOT NULL,
-	CONSTRAINT [FK_Accounts_Clients] FOREIGN KEY([OwnerId])
-		REFERENCES [dbo].[Clients] ([Id])
+create table [dbo].[Accounts](
+	[Id] [int] identity(1,1) not null primary key,
+	[Balance] [int] not null,
+	[Number] [nvarchar](20) not null unique,
+	[OwnerId] [int] not null,
+	[IsSaving] [bit] not null,
+	constraint [FK_Accounts_Clients] foreign key([OwnerId])
+		references [dbo].[Clients] ([Id])
 );
 
-CREATE TABLE [dbo].[PaymentCards](
-	[Id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
-	[Number] [nchar](10) NOT NULL UNIQUE,
-	[ExpirationDate] [date] NOT NULL,
-	[SecurityCode] [int] NOT NULL,
-	[AccountId] [int] NOT NULL,
-	CONSTRAINT [FK_PaymentCards_Accounts] FOREIGN KEY([AccountId])
-		REFERENCES [dbo].[Accounts] ([Id])
+create table [dbo].[PaymentCards](
+	[Id] [int] identity(1,1) not null primary key,
+	[Number] [nchar](10) not null unique,
+	[ExpirationDate] [date] not null,
+	[SecurityCode] [int] not null,
+	[AccountId] [int] not null,
+	constraint [FK_PaymentCards_Accounts] foreign key([AccountId])
+		references [dbo].[Accounts] ([Id])
 );
 
-CREATE TABLE [dbo].[MoneyTransactions](
-	[Id] [int] NOT NULL PRIMARY KEY,
-	[DateCreated] [date] NOT NULL,
-	[Amount] [int] NOT NULL
+create table [dbo].[MoneyTransactions](
+	[Id] [int] not null primary key,
+	[DateCreated] [date] not null,
+	[Amount] [int] not null
 );
 
-CREATE TABLE [dbo].[LoanPayments](
-	[Id] [int] NOT NULL PRIMARY KEY,
-	[AccountId] [int] NOT NULL,
-	[LoanId] [int] NOT NULL,
-	CONSTRAINT [FK_LoanPayments_Accounts] FOREIGN KEY([AccountId])
-		REFERENCES [dbo].[Accounts] ([Id]),
-	CONSTRAINT [FK_LoanPayments_Loans] FOREIGN KEY([LoanId])
-		REFERENCES [dbo].[Loans] ([Id]),
-	CONSTRAINT [FK_LoanPayments_MoneyTransactions] FOREIGN KEY([Id])
-		REFERENCES [dbo].[MoneyTransactions] ([Id])
+create table [dbo].[LoanPayments](
+	[Id] [int] not null primary key,
+	[AccountId] [int] not null,
+	[LoanId] [int] not null,
+	constraint [FK_LoanPayments_Accounts] foreign key([AccountId])
+		references [dbo].[Accounts] ([Id]),
+	constraint [FK_LoanPayments_Loans] foreign key([LoanId])
+		references [dbo].[Loans] ([Id]),
+	constraint [FK_LoanPayments_MoneyTransactions] foreign key([Id])
+		references [dbo].[MoneyTransactions] ([Id])
 );
 
-CREATE TABLE [dbo].[YearlyInterestTransactions](
-	[Id] [int] NOT NULL PRIMARY KEY,
-	[AccountId] [int] NOT NULL,
-	CONSTRAINT [FK_YearlyInterestTransactions_Accounts] FOREIGN KEY([AccountId])
-		REFERENCES [dbo].[Accounts] ([Id]),
-	CONSTRAINT [FK_YearlyInterestTransactions_MoneyTransactions] FOREIGN KEY([Id])
-		REFERENCES [dbo].[MoneyTransactions] ([Id])
+create table [dbo].[YearlyInterestTransactions](
+	[Id] [int] not null primary key,
+	[AccountId] [int] not null,
+	constraint [FK_YearlyInterestTransactions_Accounts] foreign key([AccountId])
+		references [dbo].[Accounts] ([Id]),
+	constraint [FK_YearlyInterestTransactions_MoneyTransactions] foreign key([Id])
+		references [dbo].[MoneyTransactions] ([Id])
 );
 
-CREATE TABLE [dbo].[MoneyWithdrawals](
-	[Id] [int] NOT NULL PRIMARY KEY,
-	[AccountId] [int] NOT NULL,
-	CONSTRAINT [FK_MoneyWithdrawals_Accounts] FOREIGN KEY([AccountId])
-		REFERENCES [dbo].[Accounts] ([Id]),
-	CONSTRAINT [FK_MoneyWithdrawals_MoneyTransactions] FOREIGN KEY([Id])
-		REFERENCES [dbo].[MoneyTransactions] ([Id])
+create table [dbo].[MoneyWithdrawals](
+	[Id] [int] not null primary key,
+	[AccountId] [int] not null,
+	constraint [FK_MoneyWithdrawals_Accounts] foreign key([AccountId])
+		references [dbo].[Accounts] ([Id]),
+	constraint [FK_MoneyWithdrawals_MoneyTransactions] foreign key([Id])
+		references [dbo].[MoneyTransactions] ([Id])
 );
 
-CREATE TABLE [dbo].[MoneyDeposits](
-	[Id] [int] NOT NULL PRIMARY KEY,
-	[AccountId] [int] NOT NULL,
-	CONSTRAINT [FK_MoneyDeposits_Accounts] FOREIGN KEY([AccountId])
-		REFERENCES [dbo].[Accounts] ([Id]),
-	CONSTRAINT [FK_MoneyDeposits_MoneyTransactions] FOREIGN KEY([Id])
-		REFERENCES [dbo].[MoneyTransactions] ([Id])
+create table [dbo].[MoneyDeposits](
+	[Id] [int] not null primary key,
+	[AccountId] [int] not null,
+	constraint [FK_MoneyDeposits_Accounts] foreign key([AccountId])
+		references [dbo].[Accounts] ([Id]),
+	constraint [FK_MoneyDeposits_MoneyTransactions] foreign key([Id])
+		references [dbo].[MoneyTransactions] ([Id])
 );
 
-CREATE TABLE [dbo].[MoneyTransfers](
-	[Id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
-	[SenderAccountId] [int] NOT NULL,
-	[RecipientAccountId] [int] NOT NULL,
-	CONSTRAINT [FK_MoneyTransfers_MoneyTransactions] FOREIGN KEY([Id])
-		REFERENCES [dbo].[MoneyTransactions] ([Id]),
-	CONSTRAINT [FK_Payment_Accounts] FOREIGN KEY([SenderAccountId])
-		REFERENCES [dbo].[Accounts] ([Id]),
-	CONSTRAINT [FK_Payment_Accounts1] FOREIGN KEY([RecipientAccountId])
-		REFERENCES [dbo].[Accounts] ([Id])
+create table [dbo].[MoneyTransfers](
+	[Id] [int] identity(1,1) not null primary key,
+	[SenderAccountId] [int] not null,
+	[RecipientAccountId] [int] not null,
+	constraint [FK_MoneyTransfers_MoneyTransactions] foreign key([Id])
+		references [dbo].[MoneyTransactions] ([Id]),
+	constraint [FK_Payment_Accounts] foreign key([SenderAccountId])
+		references [dbo].[Accounts] ([Id]),
+	constraint [FK_Payment_Accounts1] foreign key([RecipientAccountId])
+		references [dbo].[Accounts] ([Id])
 );

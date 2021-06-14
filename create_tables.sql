@@ -1,6 +1,6 @@
 create table [dbo].[CommonData](
-	[YearlyInterestRate] [float] not null,
-	[LoanInterestRate] [float] not null,
+	[YearlyInterestRate] [decimal] not null,
+	[LoanInterestRate] [decimal] not null,
 );
 
 create table [dbo].[People](
@@ -32,10 +32,11 @@ create table [dbo].[Clients](
 
 create table [dbo].[Loans](
 	[Id] [int] identity(1,1) not null primary key,
-	[TotalAmount] [int] not null,
-	[RemainingAmount] [int] not null,
+	[AmountLoaned] [decimal] not null,
+	[TotalAmountToPay] [decimal] not null,
+	[RemainingAmount] [decimal] not null,
 	[ClientId] [int] not null,
-	[MonthlyPayment] [int] not null,
+	[MonthlyPayment] [decimal] not null,
 	[IsCompleted] [bit] not null default 0,
 	constraint [FK_Loans_Clients] foreign key([ClientId])
 		references [dbo].[Clients] ([Id])
@@ -43,7 +44,7 @@ create table [dbo].[Loans](
 
 create table [dbo].[Accounts](
 	[Id] [int] identity(1,1) not null primary key,
-	[Balance] [int] not null,
+	[Balance] [decimal] not null,
 	[Number] [nvarchar](12) not null unique,
 	[OwnerId] [int] not null,
 	[IsSaving] [bit] not null,
@@ -66,7 +67,7 @@ create table [dbo].[PaymentCards](
 create table [dbo].[MoneyTransactions](
 	[Id] [int] identity(1,1) not null primary key,
 	[DateCreated] [date] not null,
-	[Amount] [int] not null
+	[Amount] [decimal] not null
 );
 
 create table [dbo].[LoanPayments](

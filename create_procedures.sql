@@ -157,7 +157,7 @@ go
 -- PRIVATE PROCEDURE, shouldn't be used from outside
 create procedure AddMoneyToAccount
 	@idAccount int, -- identifier of the account
-	@amountToAdd int -- amount of money to add to the account
+	@amountToAdd decimal -- amount of money to add to the account
 as
 	update Accounts
 	set Balance = Balance + @amountToAdd
@@ -170,9 +170,9 @@ go
 -- PRIVATE PROCEDURE, shouldn't be used from outside
 create procedure SubtractMoneyFromAccount
 	@idAccount int, -- identifier of the account
-	@amountToSubtract int -- amount of money to subtract from the account
+	@amountToSubtract decimal -- amount of money to subtract from the account
 as
-	declare @currentBalance int;
+	declare @currentBalance decimal;
 	select
 		@currentBalance = a.Balance
 	from Accounts a
@@ -192,13 +192,13 @@ go
 -- and create new loan entity
 create procedure AddLoan
 	@idAccount int, -- account where to send money
-	@amount int, -- amount of money
-	@monthlyPayment int -- monthly fee
+	@amount decimal, -- amount of money
+	@monthlyPayment decimal -- monthly fee
 as
 	begin try
 		begin transaction;
 			declare @idClient int;
-			declare @loanInterest int;
+			declare @loanInterest decimal;
 
 			exec AddMoneyToAccount @idAccount,@amount;
 
@@ -225,7 +225,7 @@ go
 create procedure TransferMoney
 	@senderAccountId int, -- account id of the sender
 	@recipientAccountId int, -- account id of the recipient
-	@amount int -- amount of money sent
+	@amount decimal -- amount of money sent
 as
 	begin try
 		begin transaction;
@@ -249,7 +249,7 @@ go
 -- withdraw money from the selected account
 create procedure WithdrawMoney
 	@idAccount int, -- id of the account
-	@amount int -- amount to withdraw
+	@amount decimal -- amount to withdraw
 as
 	begin try
 		begin transaction;
@@ -271,7 +271,7 @@ go
 -- deposit money to the given account
 create procedure DepositMoney
 	@idAccount int, -- id of the account
-	@amount int -- amount to deposit
+	@amount decimal -- amount to deposit
 as
 	begin try
 		begin transaction;
@@ -305,7 +305,7 @@ create procedure PayMonthlyLoan
 	@idAccount int, -- identifier of the account
 	@idLoan int -- id of the loan to pay
 as
-	declare @amount int;
+	declare @amount decimal;
 
 	begin try
 		begin transaction;
@@ -342,8 +342,8 @@ go
 create procedure AddYearlyInterest
 	@idAccount int -- id of the account where to add money
 as
-	declare @yearlyInterestRate float;
-	declare @moneyToAdd int;
+	declare @yearlyInterestRate decimal;
+	declare @moneyToAdd decimal;
 
 	select
 		@yearlyInterestRate = c.YearlyInterestRate

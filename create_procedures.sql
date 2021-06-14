@@ -38,23 +38,35 @@ create procedure AddEmployee
 	@birthDate date, -- birth date of the employee
 	@departmentId int -- id of the department where to add
 as
-	insert into People(Name,BirthDate)
-	values (@name,@birthDate);
+	begin try
+		begin transaction;
+			insert into People(Name,BirthDate)
+			values (@name,@birthDate);
 
-	insert into Employees(Id,DepartmentId)
-	values (SCOPE_IDENTITY(),@departmentId);
-
+			insert into Employees(Id,DepartmentId)
+			values (SCOPE_IDENTITY(),@departmentId);
+		commit transaction;
+	end try
+	begin catch
+		rollback transaction;
+	end catch
 go
 
 -- remove employee by its id
 create procedure RemoveEmployee
 	@idEmployee int -- id of the employee to remove
 as
-	delete from Employees
-	where Id = @idEmployee;
+	begin try
+		begin transaction;
+			delete from Employees
+			where Id = @idEmployee;
 
-	exec TryRemovePerson @idEmployee;
-
+			exec TryRemovePerson @idEmployee;
+		commit transaction;
+	end try
+	begin catch
+		rollback transaction;
+	end catch
 go
 
 -- add new client
@@ -62,23 +74,35 @@ create procedure AddClient
 	@name nvarchar(100), -- name of the client
 	@birthDate date -- birth date of the client
 as
-	insert into People(Name,BirthDate)
-	values (@name,@birthDate);
-
-	insert into Clients(Id)
-	values (SCOPE_IDENTITY());
-
+	begin try
+		begin transaction;
+			insert into People(Name,BirthDate)
+			values (@name,@birthDate);
+			
+			insert into Clients(Id)
+			values (SCOPE_IDENTITY());
+		commit transaction;
+	end try
+	begin catch
+		rollback transaction;
+	end catch
 go
 
 -- remove client by its id
 create procedure RemoveClient
 	@idClient int -- id of the client to remove
 as
-	delete from Clients
-	where Id = @idClient
+	begin try
+		begin transaction;
+			delete from Clients
+			where Id = @idClient
 
-	exec TryRemovePerson @idClient;
-
+			exec TryRemovePerson @idClient;
+		commit transaction;
+	end try
+	begin catch
+		rollback transaction;
+	end catch
 go
 
 -- add new standard account
@@ -105,12 +129,18 @@ go
 create procedure RemoveAccount
 	@idAccount int -- id of the account to remove
 as
-	delete from PaymentCards
-	where AccountId = @idAccount;
+	begin try
+		begin transaction;
+			delete from PaymentCards
+			where AccountId = @idAccount;
 
-	delete from Accounts
-	where Id = @idAccount;
-
+			delete from Accounts
+			where Id = @idAccount;
+		commit transaction;
+	end try
+	begin catch
+		rollback transaction;
+	end catch
 go
 
 -- add new loan to client
@@ -120,20 +150,26 @@ create procedure AddLoan
 	@idAccount int, -- account where to send money
 	@amount int -- amount of money
 as
-	declare @idClient int;
+	begin try
+		begin transaction;
+			declare @idClient int;
 
-	update Accounts
-	set Balance = Balance + @amount
-	where Id = @idAccount;
+			update Accounts
+			set Balance = Balance + @amount
+			where Id = @idAccount;
 
-	select
-		@idClient = a.OwnerId
-	from Accounts a
-	where a.Id = @idAccount;
+			select
+				@idClient = a.OwnerId
+			from Accounts a
+			where a.Id = @idAccount;
 
-	insert into Loans(ClientId,TotalAmount,RemainingAmount)
-	values(@idClient,@amount,@amount * 1.2);
-
+			insert into Loans(ClientId,TotalAmount,RemainingAmount)
+			values(@idClient,@amount,@amount * 1.2);
+		commit transaction;
+	end try
+	begin catch
+		rollback transaction;
+	end catch
 go
 
 -- add new card
@@ -183,19 +219,26 @@ create procedure TransferMoney
 	@recipientAccountId int, -- account id of the recipient
 	@amount int -- amount of money sent
 as
-	update Accounts
-	set Balance = Balance - @amount
-	where Id = @senderAccountId;
+	begin try
+		begin transaction;
+			update Accounts
+			set Balance = Balance - @amount
+			where Id = @senderAccountId;
 
-	update Accounts
-	set Balance = Balance + @amount
-	where Id = @recipientAccountId;
+			update Accounts
+			set Balance = Balance + @amount
+			where Id = @recipientAccountId;
 
-	insert into MoneyTransactions(Amount, DateCreated)
-	values (@amount, GETDATE());
+			insert into MoneyTransactions(Amount, DateCreated)
+			values (@amount, GETDATE());
 
-	insert into MoneyTransfers(Id, SenderAccountId, RecipientAccountId)
-	values (SCOPE_IDENTITY(),@senderAccountId, @recipientAccountId);
+			insert into MoneyTransfers(Id, SenderAccountId, RecipientAccountId)
+			values (SCOPE_IDENTITY(),@senderAccountId, @recipientAccountId);
+		commit transaction;
+	end try
+	begin catch
+		rollback transaction;
+	end catch
 go
 
 -- withdraw money from the selected account
@@ -203,15 +246,22 @@ create procedure WithdrawMoney
 	@idAccount int, -- id of the account
 	@amount int -- amount to withdraw
 as
-	update Accounts
-	set Balance = Balance - @amount
-	where Id = @idAccount;
+	begin try
+		begin transaction;
+			update Accounts
+			set Balance = Balance - @amount
+			where Id = @idAccount;
 
-	insert into MoneyTransactions(Amount, DateCreated)
-	values (@amount, GETDATE());
+			insert into MoneyTransactions(Amount, DateCreated)
+			values (@amount, GETDATE());
 
-	insert into MoneyWithdrawals(Id,AccountId)
-	values (SCOPE_IDENTITY(),@idAccount);
+			insert into MoneyWithdrawals(Id,AccountId)
+			values (SCOPE_IDENTITY(),@idAccount);
+		commit transaction;
+	end try
+	begin catch
+		rollback transaction;
+	end catch
 go
 
 -- deposit money to the given account
@@ -219,15 +269,22 @@ create procedure DepositMoney
 	@idAccount int, -- id of the account
 	@amount int -- amount to deposit
 as
-	update Accounts
-	set Balance = Balance + @amount
-	where Id = @idAccount;
+	begin try
+		begin transaction;
+			update Accounts
+			set Balance = Balance + @amount
+			where Id = @idAccount;
 
-	insert into MoneyTransactions(Amount, DateCreated)
-	values (@amount, GETDATE());
+			insert into MoneyTransactions(Amount, DateCreated)
+			values (@amount, GETDATE());
 
-	insert into MoneyDeposits(Id,AccountId)
-	values (SCOPE_IDENTITY(),@idAccount);
+			insert into MoneyDeposits(Id,AccountId)
+			values (SCOPE_IDENTITY(),@idAccount);
+		commit transaction;
+	end try
+	begin catch
+		rollback transaction;
+	end catch
 go
 
 -- mark loans that are completely paid
@@ -246,31 +303,38 @@ create procedure PayMonthlyLoan
 as
 	declare @amount int;
 
-	select
-		@amount = case 
-		when l.MonthlyPayment <= l.RemainingAmount 
-			then l.MonthlyPayment
-			else l.RemainingAmount
-		end
-	from Loans l
-	where l.Id = @idLoan;
+	begin try
+		begin transaction;
+			select
+				@amount = case 
+				when l.MonthlyPayment <= l.RemainingAmount 
+					then l.MonthlyPayment
+					else l.RemainingAmount
+				end
+			from Loans l
+			where l.Id = @idLoan;
 
-	update Accounts
-	set Balance = Balance - @amount
-	where Id = @idAccount;
+			update Accounts
+			set Balance = Balance - @amount
+			where Id = @idAccount;
 
-	insert into MoneyTransactions(Amount, DateCreated)
-	values (@amount, GETDATE());
+			insert into MoneyTransactions(Amount, DateCreated)
+			values (@amount, GETDATE());
 
-	insert into LoanPayments(Id,AccountId,LoanId)
-	values (SCOPE_IDENTITY(),@idAccount,@idLoan);
+			insert into LoanPayments(Id,AccountId,LoanId)
+			values (SCOPE_IDENTITY(),@idAccount,@idLoan);
+		commit transaction;
+	end try
+	begin catch
+		rollback transaction;
+	end catch
 go
 
 -- add yearly interest to the selected account
 create procedure AddYearlyInterest
 	@idAccount int -- id of the account where to add money
 as
-	declare @yearlyInterestRate int;
+	declare @yearlyInterestRate float;
 	declare @moneyToAdd int;
 
 	select
@@ -299,24 +363,30 @@ as
 	declare @accountCursor cursor;
 	declare @idAccount int;
 
-	set @accountCursor = cursor for
-		select a.Id
-		from Accounts a
-		where a.IsSaving=1;
+	begin try
+		begin transaction;
+			set @accountCursor = cursor for
+				select a.Id
+				from Accounts a
+				where a.IsSaving=1;
 
-	open @accountCursor;
-	fetch next
-	from @accountCursor into @idAccount;
-	while @@FETCH_STATUS = 0
-	begin
-		exec AddYearlyInterest @idAccount;
-		fetch next
-		from @accountCursor into @idAccount;
-	end
+			open @accountCursor;
+			fetch next
+			from @accountCursor into @idAccount;
+			while @@FETCH_STATUS = 0
+			begin
+				exec AddYearlyInterest @idAccount;
+				fetch next
+				from @accountCursor into @idAccount;
+			end
 
-	close @accountCursor;
-	deallocate @accountCursor;
-
+			close @accountCursor;
+			deallocate @accountCursor;
+		commit transaction;
+	end try
+	begin catch
+		rollback transaction;
+	end catch
 go
 
 -- get all incoming payments to the given recipient

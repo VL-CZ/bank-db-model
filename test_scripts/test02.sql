@@ -61,8 +61,8 @@ select * from AllTransactions;
 -- transfer another money
 exec TransferMoney 2,3,250;
 exec TransferMoney 5,2,400;
-exec TransferMoney 4,1,10000;
-exec TransferMoney 4,2,6666;
+exec TransferMoney 4,1,10000.5;
+exec TransferMoney 4,2,6666.66;
 
 select * from AccountsWithOwners;
 select * from AllTransactions;

@@ -1,4 +1,4 @@
--- get all Clients with their personal data
+-- get all active Clients with their personal data
 create view ClientsWithPersonData
 as
 	select p.Id,p.BirthDate,p.Name 
@@ -18,7 +18,7 @@ as
 	on p.Id = e.Id;
 go
 
--- get all Accounts including their owners
+-- get all active Accounts including their owners
 create view AccountsWithOwners
 as
 	select p.Id as 'PersonId', p.Name, p.BirthDate, a.Id as 'AccountId', a.Number, a.Balance, a.IsSaving
@@ -28,7 +28,7 @@ as
 	where a.IsActive = 1;
 go
 
--- get all loans with their owners
+-- get all non-completed loans with their owners
 create view ActiveLoansWithOwners
 as
 	select p.Id as 'PersonId', p.Name, p.BirthDate,l.Id as 'LoanId', l.TotalAmount, l.RemainingAmount

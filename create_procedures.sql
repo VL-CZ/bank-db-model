@@ -1,6 +1,7 @@
 -- try to remove person by its id
 -- if it's related to any client or employee -> do nothing
 -- otherwise delete the row
+-- PRIVATE PROCEDURE, shouldn't be used from outside
 create procedure TryRemovePerson
 	@idPerson int -- identifier of the person to remove
 as
@@ -153,6 +154,7 @@ as
 go
 
 -- add money to the given account
+-- PRIVATE PROCEDURE, shouldn't be used from outside
 create procedure AddMoneyToAccount
 	@idAccount int, -- identifier of the account
 	@amountToAdd int -- amount of money to add to the account
@@ -165,6 +167,7 @@ go
 
 -- subtract money from the given account
 -- if not possible, throw an error
+-- PRIVATE PROCEDURE, shouldn't be used from outside
 create procedure SubtractMoneyFromAccount
 	@idAccount int, -- identifier of the account
 	@amountToSubtract int -- amount of money to subtract from the account
@@ -330,6 +333,7 @@ as
 go
 
 -- add yearly interest to the selected account
+-- PRIVATE PROCEDURE, shouldn't be used from outside
 create procedure AddYearlyInterest
 	@idAccount int -- id of the account where to add money
 as

@@ -33,7 +33,7 @@ as
 go
 
 -- add new employee to existing deparment
-create procedure AddEmployeeToDepartment
+create procedure AddEmployee
 	@name nvarchar(100), -- employee name
 	@birthDate date, -- birth date of the employee
 	@departmentId int -- id of the department where to add
@@ -294,7 +294,7 @@ as
 go
 
 -- add yearly interests to all saving accounts
-create procedure AddInterestsToSavingAccounts
+create procedure AddYearlyInterests
 as
 	declare @accountCursor cursor;
 	declare @idAccount int;

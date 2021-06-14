@@ -35,7 +35,7 @@ go
 
 -- add new employee to existing deparment
 create procedure AddEmployee
-	@name nvarchar(100), -- employee name
+	@name nvarchar(200), -- employee name
 	@birthDate date, -- birth date of the employee
 	@departmentId int -- id of the department where to add
 as
@@ -74,7 +74,7 @@ go
 
 -- add new client
 create procedure AddClient
-	@name nvarchar(100), -- name of the client
+	@name nvarchar(200), -- name of the client
 	@birthDate date -- birth date of the client
 as
 	begin try
@@ -104,7 +104,7 @@ go
 
 -- add new standard account
 create procedure AddStandardAccount
-	@number nvarchar(20), -- account number
+	@number nvarchar(12), -- account number
 	@idClient int -- id of the owner
 as
 	insert into Accounts(Number,Balance,OwnerId,IsSaving)
@@ -114,7 +114,7 @@ go
 
 -- add new saving account
 create procedure AddSavingAccount
-	@number nvarchar(20), -- account number
+	@number nvarchar(12), -- account number
 	@idClient int -- id of the owner
 as
 	insert into Accounts(Number,Balance,OwnerId,IsSaving)
@@ -135,7 +135,7 @@ go
 -- add new card
 create procedure AddCard
 	@idAccount int, -- id of the account that this card belongs to
-	@number nchar(10), -- card number
+	@number nvarchar(16), -- card number
 	@expirationDate date, -- expiration date
 	@securityCode int -- security code
 as

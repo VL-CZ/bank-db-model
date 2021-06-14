@@ -43,7 +43,7 @@ create table [dbo].[Loans](
 create table [dbo].[Accounts](
 	[Id] [int] identity(1,1) not null primary key,
 	[Balance] [int] not null,
-	[Number] [nvarchar](20) not null unique,
+	[Number] [nvarchar](12) not null unique,
 	[OwnerId] [int] not null,
 	[IsSaving] [bit] not null,
 	[IsActive] [bit] not null default 1,
@@ -53,7 +53,8 @@ create table [dbo].[Accounts](
 
 create table [dbo].[PaymentCards](
 	[Id] [int] identity(1,1) not null primary key,
-	[Number] [nchar](10) not null unique,
+	[Number] [nvarchar](16) not null unique,
+	[PinHash] [nvarchar](200) not null default 'xxWEVSDAEewdv23faD23t4wes',
 	[ExpirationDate] [date] not null,
 	[SecurityCode] [int] not null,
 	[AccountId] [int] not null,

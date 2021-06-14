@@ -21,7 +21,7 @@ go
 -- get all Accounts including their owners
 create view AccountsWithOwners
 as
-	select p.Id, p.Name, p.BirthDate, a.Number, a.Balance
+	select p.Id, p.Name, p.BirthDate, a.Number, a.Balance, a.IsSaving
 	from Accounts a
 	inner join Clients c on c.Id = a.OwnerId
 	inner join People p on p.Id = c.PersonId

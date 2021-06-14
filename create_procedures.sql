@@ -1,14 +1,3 @@
--- gets all account of the given client
-create procedure GetAccountsOf
-	@idClient int -- identifier of the client
-as
-	select a.Id, a.Number, a.Balance
-	from Accounts a
-	inner join Clients c on a.OwnerId = c.Id
-	where c.Id = @idClient;
-
-go
-
 -- try to remove person by its id
 -- if it's related to any client or employee -> do nothing
 -- otherwise delete the row
@@ -106,13 +95,23 @@ as
 
 go
 
--- add new account
-create procedure AddAccount
+-- add new standard account
+create procedure AddStandardAccount
 	@number int, -- account number
 	@idClient int -- id of the owner
 as
-	insert into Accounts(Number,Balance,OwnerId)
-	values (@number,0,@idClient);
+	insert into Accounts(Number,Balance,OwnerId,IsSaving)
+	values (@number,0,@idClient,0);
+
+go
+
+-- add new saving account
+create procedure AddSavingAccount
+	@number int, -- account number
+	@idClient int -- id of the owner
+as
+	insert into Accounts(Number,Balance,OwnerId,IsSaving)
+	values (@number,0,@idClient,1);
 
 go
 
@@ -206,15 +205,86 @@ as
 	set Balance = Balance + @amount
 	where Id = @recipientAccountId;
 
-	insert into Payments(SenderAccountId, RecipientAccountId, Amount, CreatedAt)
-	values (@senderAccountId, @recipientAccountId, @amount, GETDATE());
+	insert into MoneyTransactions(Amount, DateCreated)
+	values (@amount, GETDATE());
+
+	insert into MoneyTransfers(Id, SenderAccountId, RecipientAccountId)
+	values (SCOPE_IDENTITY(),@senderAccountId, @recipientAccountId);
+go
+
+-- withdraw money from the selected account
+create procedure WithdrawMoney
+	@idAccount int, -- id of the account
+	@amount int -- amount to withdraw
+as
+	update Accounts
+	set Balance = Balance - @amount
+	where Id = @idAccount;
+
+	insert into MoneyTransactions(Amount, DateCreated)
+	values (@amount, GETDATE());
+
+	insert into MoneyWithdrawals(Id,AccountId)
+	values (SCOPE_IDENTITY(),@idAccount);
+go
+
+-- deposit money to the given account
+create procedure DepositMoney
+	@idAccount int, -- id of the account
+	@amount int -- amount to deposit
+as
+	update Accounts
+	set Balance = Balance + @amount
+	where Id = @idAccount;
+
+	insert into MoneyTransactions(Amount, DateCreated)
+	values (@amount, GETDATE());
+
+	insert into MoneyDeposits(Id,AccountId)
+	values (SCOPE_IDENTITY(),@idAccount);
+go
+
+-- mark loans that are completely paid
+create procedure MarkCompletedLoans
+as
+	update Loans
+	set IsCompleted = 1
+	where RemainingAmount <= 0;
+
+go
+
+-- pay monthly loan fee
+create procedure PayMonthlyLoan
+	@idAccount int, -- identifier of the account
+	@idLoan int -- id of the loan to pay
+as
+	declare @amount int;
+
+	select
+		@amount = case 
+		when l.MonthlyPayment <= l.RemainingAmount 
+			then l.MonthlyPayment
+			else l.RemainingAmount
+		end
+	from Loans l
+	where l.Id = @idLoan;
+
+	update Accounts
+	set Balance = Balance - @amount
+	where Id = @idAccount;
+
+	insert into MoneyTransactions(Amount, DateCreated)
+	values (@amount, GETDATE());
+
+	insert into LoanPayments(Id,AccountId,LoanId)
+	values (SCOPE_IDENTITY(),@idAccount,@idLoan);
 go
 
 -- get all incoming payments to the given recipient
 create procedure GetAllIncomingPayments
 	@idAccount int -- id of the recipient account
 as
-	select a.Number as 'Sender', p.Amount, p.CreatedAt as 'Date' 
+	select a.Number as 'Sender', p.Amount, p.DateCreated as 'Date' 
 	from Accounts a
 	inner join Payments p
 	on p.SenderAccountId = a.Id
@@ -226,10 +296,63 @@ go
 create procedure GetAllOutcomingPayments
 	@idAccount int -- id of the sender account
 as
-	select a.Number as 'Sender', p.Amount, p.CreatedAt as 'Date' 
+	select a.Number as 'Sender', p.Amount, p.DateCreated as 'Date' 
 	from Accounts a
 	inner join Payments p
 	on p.RecipientAccountId = a.Id
 	where p.SenderAccountId = @idAccount;
+
+go
+
+-- add yearly interest to the selected account
+create procedure AddYearlyInterest
+	@idAccount int -- id of the account where to add money
+as
+	declare @yearlyInterestRate int;
+	declare @moneyToAdd int;
+
+	select
+		@yearlyInterestRate = c.YearlyInterestRate
+	from CommonData c;
+	
+	select
+		@moneyToAdd = a.Balance * @yearlyInterestRate
+	from Accounts a
+	where a.Id = @idAccount;
+
+	update Accounts
+	set Balance = Balance + @moneyToAdd
+	where Id = @idAccount;
+
+	insert into MoneyTransactions(Amount, DateCreated)
+	values (@moneyToAdd, GETDATE());
+
+	insert into YearlyInterestTransactions(Id,AccountId)
+	values (SCOPE_IDENTITY(),@idAccount);
+go
+
+-- add yearly interests to all saving accounts
+create procedure AddInterestsToSavingAccounts
+as
+	declare @accountCursor cursor;
+	declare @idAccount int;
+
+	set @accountCursor = cursor for
+		select a.Id
+		from Accounts a
+		where a.IsSaving=1;
+
+	open @accountCursor;
+	fetch next
+	from @accountCursor into @idAccount;
+	while @@FETCH_STATUS = 0
+	begin
+		exec AddYearlyInterest @idAccount;
+		fetch next
+		from @accountCursor into @idAccount;
+	end
+
+	close @accountCursor;
+	deallocate @accountCursor;
 
 go

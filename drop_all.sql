@@ -26,3 +26,18 @@ drop view EmployeesWithPersonData;
 drop view AccountsWithOwners;
 drop view ActiveLoansWithOwners;
 drop view AllTransactions;
+
+drop table [dbo].[MoneyTransfers];
+drop table [dbo].[MoneyDeposits];
+drop table [dbo].[MoneyWithdrawals];
+drop table [dbo].[YearlyInterestTransactions];
+drop table [dbo].[LoanPayments];
+drop table [dbo].[MoneyTransactions];
+drop table [dbo].[PaymentCards];
+drop table [dbo].[Accounts];
+drop table [dbo].[Loans];
+drop table [dbo].[Clients];
+drop table [dbo].[Employees];
+drop table [dbo].[Departments];
+drop table [dbo].[People];
+drop table [dbo].[CommonData];

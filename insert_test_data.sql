@@ -48,13 +48,3 @@ values
 ('2225554444','2022-04-30',123,3),
 ('1111122222','2022-12-31',123,5);
 
--- deposit money to accounts
-exec DepositMoney 1,5000;
-exec DepositMoney 2,10000;
-exec DepositMoney 3,100000;
-exec DepositMoney 4,999999;
-exec DepositMoney 5,250000;
-exec DepositMoney 3,50000;
-
--- add yearly interests to all saving accounts
-exec AddYearlyInterests;

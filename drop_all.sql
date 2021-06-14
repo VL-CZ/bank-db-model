@@ -1,3 +1,4 @@
+-- drop all procedures
 drop procedure TryRemovePerson;
 drop procedure AddEmployeeToDepartment;
 drop procedure RemoveEmployee;
@@ -21,12 +22,14 @@ drop procedure AddInterestsToSavingAccounts;
 drop procedure GetAllIncomingTransactions
 drop procedure GetAllOutcomingTransactions;
 
+-- drop all views
 drop view ClientsWithPersonData;
 drop view EmployeesWithPersonData;
 drop view AccountsWithOwners;
 drop view ActiveLoansWithOwners;
 drop view AllTransactions;
 
+-- drop all tables
 drop table [dbo].[MoneyTransfers];
 drop table [dbo].[MoneyDeposits];
 drop table [dbo].[MoneyWithdrawals];

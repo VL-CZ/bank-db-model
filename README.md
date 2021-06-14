@@ -8,6 +8,7 @@ See the full requirements [here](https://www.ms.mff.cuni.cz/~kopecky/vyuka/dbapl
 - run [create_tables.sql](create_tables.sql)
 - run [create_views.sql](create_views.sql)
 - run [create_procedures.sql](create_procedures.sql)
+- run [create_functions.sql](create_functions.sql)
 
 ## Insert test data
 - run [insert_test_data.sql](insert_test_data.sql)

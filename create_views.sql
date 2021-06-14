@@ -31,7 +31,8 @@ go
 -- get all non-completed loans with their owners
 create view ActiveLoansWithOwners
 as
-	select p.Id as 'PersonId', p.Name, p.BirthDate,l.Id as 'LoanId', l.AmountLoaned,l.TotalAmountToPay, l.RemainingAmount
+	select p.Id as 'PersonId', p.Name, p.BirthDate,l.Id as 'LoanId', l.AmountLoaned,l.TotalAmountToPay, 
+		l.RemainingAmount, l.MonthlyPayment, dbo.RemainingMonthsToPay(l.Id) as 'RemainingMonths'
 	from Loans l
 	inner join Clients c on c.Id = l.ClientId
 	inner join People p on p.Id = c.Id

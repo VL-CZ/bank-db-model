@@ -22,6 +22,9 @@ drop procedure GetAllOutcomingTransactions;
 drop procedure AddMoneyToAccount;
 drop procedure SubtractMoneyFromAccount;
 
+-- drop all functions
+drop function RemainingMonthsToPay;
+
 -- drop all views
 drop view ClientsWithPersonData;
 drop view EmployeesWithPersonData;

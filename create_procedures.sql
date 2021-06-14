@@ -10,26 +10,26 @@ as
 	if exists (
 		select top 1 * 
 		from Employees e 
-		where e.PersonId = @idPerson
+		where e.Id = @idPerson
 	)
 	begin
-		set @canDelete = 0
-	end;
+		set @canDelete = 0;
+	end
 
 	if exists (
 		select top 1 * 
 		from Clients c
-		where c.PersonId = @idPerson
+		where c.Id = @idPerson
 	)
 	begin
-		set @canDelete = 0
-	end;
+		set @canDelete = 0;
+	end
 
 	if(@canDelete = 1)
 	begin
 		delete from People
-		where Id = @idPerson
-	end;
+		where Id = @idPerson;
+	end
 go
 
 -- add new employee to existing deparment
@@ -41,7 +41,7 @@ as
 	insert into People(Name,BirthDate)
 	values (@name,@birthDate);
 
-	insert into Employees(PersonId,DepartmentId)
+	insert into Employees(Id,DepartmentId)
 	values (SCOPE_IDENTITY(),@departmentId);
 
 go
@@ -50,17 +50,10 @@ go
 create procedure RemoveEmployee
 	@idEmployee int -- id of the employee to remove
 as
-	declare @idPerson int;
-
-	select 
-		@idPerson = e.PersonId
-	from Employees e
-	where e.Id = @idEmployee;
-
 	delete from Employees
 	where Id = @idEmployee;
 
-	exec TryRemovePerson @idPerson;
+	exec TryRemovePerson @idEmployee;
 
 go
 
@@ -72,7 +65,7 @@ as
 	insert into People(Name,BirthDate)
 	values (@name,@birthDate);
 
-	insert into Clients(PersonId)
+	insert into Clients(Id)
 	values (SCOPE_IDENTITY());
 
 go
@@ -81,17 +74,10 @@ go
 create procedure RemoveClient
 	@idClient int -- id of the client to remove
 as
-	declare @idPerson int;
-
-	select 
-		@idPerson = c.PersonId
-	from Clients c
-	where c.Id = @idClient;
-
 	delete from Clients
 	where Id = @idClient
 
-	exec TryRemovePerson @idPerson;
+	exec TryRemovePerson @idClient;
 
 go
 
@@ -280,30 +266,6 @@ as
 	values (SCOPE_IDENTITY(),@idAccount,@idLoan);
 go
 
--- get all incoming payments to the given recipient
-create procedure GetAllIncomingPayments
-	@idAccount int -- id of the recipient account
-as
-	select a.Number as 'Sender', p.Amount, p.DateCreated as 'Date' 
-	from Accounts a
-	inner join Payments p
-	on p.SenderAccountId = a.Id
-	where p.recipientAccountId = @idAccount;
-
-go
-
--- get all outcoming payments from the given sender
-create procedure GetAllOutcomingPayments
-	@idAccount int -- id of the sender account
-as
-	select a.Number as 'Sender', p.Amount, p.DateCreated as 'Date' 
-	from Accounts a
-	inner join Payments p
-	on p.RecipientAccountId = a.Id
-	where p.SenderAccountId = @idAccount;
-
-go
-
 -- add yearly interest to the selected account
 create procedure AddYearlyInterest
 	@idAccount int -- id of the account where to add money
@@ -355,4 +317,20 @@ as
 	close @accountCursor;
 	deallocate @accountCursor;
 
+go
+
+-- get all incoming payments to the given recipient
+create procedure GetAllIncomingTransactions
+	@idAccount int -- id of the recipient account
+as
+	select * from AllTransactions
+	where TargetAccountId = @idAccount;
+go
+
+-- get all outcoming payments from the given sender
+create procedure GetAllOutcomingTransactions
+	@idAccount int -- id of the sender account
+as
+	select * from AllTransactions
+	where SourceAccountId = @idAccount;
 go

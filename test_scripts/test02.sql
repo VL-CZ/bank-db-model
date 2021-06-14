@@ -70,3 +70,9 @@ select * from AllTransactions;
 -- display all in/out -coming transmissions with respect to the given account
 exec GetAllIncomingTransactions 2;
 exec GetAllOutcomingTransactions 2;
+
+select * from AccountsWithOwners;
+
+-- try to send more money than we have -> raises error and the transaction is rollbacked
+exec TransferMoney 2,5,999999;
+select * from AccountsWithOwners;

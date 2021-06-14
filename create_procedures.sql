@@ -164,13 +164,23 @@ as
 go
 
 -- subtract money from the given account
+-- if not possible, throw an error
 create procedure SubtractMoneyFromAccount
 	@idAccount int, -- identifier of the account
-	@amountToAdd int -- amount of money to subtract from the account
+	@amountToSubtract int -- amount of money to subtract from the account
 as
-	update Accounts
-	set Balance = Balance - @amountToAdd
-	where Id = @idAccount;
+	declare @currentBalance int;
+	select
+		@currentBalance = a.Balance
+	from Accounts a
+	where Id=@idAccount;
+
+	if @amountToSubtract <= @currentBalance
+		update Accounts
+		set Balance = Balance - @amountToSubtract
+		where Id = @idAccount;
+	else
+		raiserror('Not enough money.',16,1);
 
 go
 

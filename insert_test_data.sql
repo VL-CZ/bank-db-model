@@ -1,7 +1,7 @@
 insert into CommonData(YearlyInterestRate,LoanInterestRate)
 values (0.01,0.1);
 
-insert into Departments(Address)
+insert into Departments(Name)
 values
 ('Department 1'),
 ('Department 2');

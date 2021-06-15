@@ -23,3 +23,6 @@ Firstly run [test01](test_scripts/test01.sql) and then [test02](test_scripts/tes
 
 ## Drop all tables, views and procedures
 - run [drop_all.sql](drop_all.sql)
+
+## Update statistics
+- run [update_statistics.sql](update_statistics.sql)

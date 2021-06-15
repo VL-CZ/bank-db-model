@@ -25,6 +25,11 @@ exec RemoveCard 4;
 select * from PaymentCards pc
 where pc.AccountId=6;
 
+select * from PaymentCards;
+-- try to add card to saving account -> throws error
+exec AddCard 4,'1987462599','2022-08-25',123;
+select * from PaymentCards;
+
 select * from AccountsWithOwners;
 
 -- remove the accounts

@@ -132,15 +132,24 @@ as
 
 go
 
--- add new card
+-- add new card to the selected account
 create procedure AddCard
 	@idAccount int, -- id of the account that this card belongs to
 	@number nvarchar(16), -- card number
 	@expirationDate date, -- expiration date
 	@securityCode int -- security code
 as
-	insert into PaymentCards(AccountId,ExpirationDate,Number,SecurityCode)
-	values (@idAccount,@expirationDate,@number,@securityCode);
+	if exists (
+		select * 
+		from Accounts a 
+		where a.Id = @idAccount and a.IsSaving = 0 and a.IsActive = 1
+	)
+		begin
+			insert into PaymentCards(AccountId,ExpirationDate,Number,SecurityCode)
+			values (@idAccount,@expirationDate,@number,@securityCode);
+		end
+	else
+		raiserror('Unable to add card.',16,1);
 
 go
 

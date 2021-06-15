@@ -4,6 +4,9 @@ See the general requirements [here](https://www.ms.mff.cuni.cz/~kopecky/vyuka/db
 ## Data model
 ![Data model](db-model.PNG)
 
+- Client and Employee entities are subtypes of Employee entity
+- YearlyInterestTransaction, MoneyTransfer, MoneyDeposit, MoneyWithdrawal and LoanPayments are all subtypes of MoneyTransaction entity
+
 ## Create schema
 - run [create_tables.sql](create_tables.sql)
 - run [create_views.sql](create_views.sql)

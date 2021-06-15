@@ -3,8 +3,8 @@ values (0.01,0.1);
 
 insert into Departments(Address)
 values
-('Old Town Square 25, Prague, Czech Republic'),
-('New St. 1220, Brno, Czech Republic');
+('Department 1'),
+('Department 2');
 
 insert into People(Name,BirthDate)
 values

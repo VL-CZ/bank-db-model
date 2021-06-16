@@ -27,6 +27,7 @@ create table [dbo].[Employees](
 	constraint [FK_Employee_Person] foreign key([Id])
 		references [dbo].[People] ([Id])
 );
+create index Employees_DeparmentId on Employees(DepartmentId);
 
 -- represents a Client = person who has account/loan in the bank
 create table [dbo].[Clients](
@@ -48,6 +49,7 @@ create table [dbo].[Loans](
 	constraint [FK_Loans_Clients] foreign key([ClientId])
 		references [dbo].[Clients] ([Id])
 );
+create index Loans_ClientId on Loans(ClientId);
 
 -- this table contains clients' accounts
 create table [dbo].[Accounts](
@@ -60,6 +62,7 @@ create table [dbo].[Accounts](
 	constraint [FK_Accounts_Clients] foreign key([OwnerId])
 		references [dbo].[Clients] ([Id])
 );
+create index Accounts_OwnerId on Accounts(OwnerId);
 
 -- represents payment cards
 create table [dbo].[PaymentCards](
@@ -72,6 +75,7 @@ create table [dbo].[PaymentCards](
 	constraint [FK_PaymentCards_Accounts] foreign key([AccountId])
 		references [dbo].[Accounts] ([Id])
 );
+create index PaymentCards_AccountId on PaymentCards(AccountId);
 
 -- this is a base table for all money transactions (money transfers, withdrawals, deposits,...)
 create table [dbo].[MoneyTransactions](
@@ -92,6 +96,8 @@ create table [dbo].[LoanPayments](
 	constraint [FK_LoanPayments_MoneyTransactions] foreign key([Id])
 		references [dbo].[MoneyTransactions] ([Id])
 );
+create index LoanPayments_AccountId on LoanPayments(AccountId);
+create index LoanPayments_LoanId on LoanPayments(LoanId);
 
 -- this table contains all yearly interest transactions
 -- yearly interest is added only to saving accounts
@@ -103,6 +109,7 @@ create table [dbo].[YearlyInterestTransactions](
 	constraint [FK_YearlyInterestTransactions_MoneyTransactions] foreign key([Id])
 		references [dbo].[MoneyTransactions] ([Id])
 );
+create index YearlyInterestTransactions_AccountId on YearlyInterestTransactions(AccountId);
 
 -- this table contains all records of Money withdrawals
 create table [dbo].[MoneyWithdrawals](
@@ -113,6 +120,7 @@ create table [dbo].[MoneyWithdrawals](
 	constraint [FK_MoneyWithdrawals_MoneyTransactions] foreign key([Id])
 		references [dbo].[MoneyTransactions] ([Id])
 );
+create index MoneyWithdrawals_AccountId on MoneyWithdrawals(AccountId);
 
 -- this table contains all records of Money deposits
 create table [dbo].[MoneyDeposits](
@@ -123,6 +131,7 @@ create table [dbo].[MoneyDeposits](
 	constraint [FK_MoneyDeposits_MoneyTransactions] foreign key([Id])
 		references [dbo].[MoneyTransactions] ([Id])
 );
+create index MoneyDeposits_AccountId on MoneyDeposits(AccountId);
 
 -- this table contains records of all money transfers betweeen two accounts
 create table [dbo].[MoneyTransfers](
@@ -136,3 +145,5 @@ create table [dbo].[MoneyTransfers](
 	constraint [FK_Payment_Accounts1] foreign key([RecipientAccountId])
 		references [dbo].[Accounts] ([Id])
 );
+create index MoneyTransfers_SenderAccountId on MoneyTransfers(SenderAccountId);
+create index MoneyTransfers_RecipientAccountId on MoneyTransfers(RecipientAccountId);
